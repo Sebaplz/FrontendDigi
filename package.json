@@ -16,7 +16,7 @@
     "react-hook-form": "^7.39.4",
     "react-icons": "^4.2.0",
     "react-table": "^7.8.0",
-    "regenerator-runtime": "^0.13.10"
+    "regenerator-runtime": "^0.13.11"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.19.6",

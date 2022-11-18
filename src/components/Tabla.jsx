@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useTable, usePagination } from "react-table";
+import regeneratorRuntime from "regenerator-runtime";
+import {
+  useTable,
+  useGlobalFilter,
+  usePagination,
+  useAsyncDebounce,
+} from "react-table";
 
 import { BiFirstPage, BiLastPage } from "react-icons/bi";
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
@@ -34,6 +40,7 @@ function Tabla() {
         pageIndex: 0,
       },
     },
+    useGlobalFilter,
     usePagination
   );
 
@@ -51,13 +58,24 @@ function Tabla() {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    state: { pageIndex, pageSize, globalFilter },
   } = table;
 
   return (
     <div>
-      <table {...getTableProps()}>
+      <table {...getTableProps()} className="w-full">
         <thead>
+          <tr>
+            <th colSpan={4}>
+              <DigimonFilter
+                preGlobalFilteredRows={preGlobalFilteredRows}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />
+            </th>
+          </tr>
           {
             // Loop over the header rows
             headerGroups.map((headerGroup) => (
@@ -69,7 +87,7 @@ function Tabla() {
                     // Apply the header cell props
                     <th
                       {...column.getHeaderProps()}
-                      className="text-lg pb-2 pr-10"
+                      className="text-lg pb-2 pr-10 text-left"
                     >
                       {
                         // Render the header
@@ -112,14 +130,14 @@ function Tabla() {
           }
         </tbody>
       </table>
-      <div className="">
+      <div className="flex items-center pt-2 flex-col">
         <span className="text-lg">
           Página&nbsp;
           <strong>
             {pageIndex + 1} de {pageOptions.length}
           </strong>{" "}
         </span>
-        <div className="pt-2">
+        <div className="px-3">
           <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
             <BiFirstPage className="text-2xl" />
           </button>{" "}
@@ -153,3 +171,35 @@ function Tabla() {
 }
 
 export default Tabla;
+
+function DigimonFilter({
+  preGlobalFilteredRows,
+  globalFilter,
+  setGlobalFilter,
+}) {
+  const totalDigimonsDisponibles = preGlobalFilteredRows.length;
+  const [value, setValue] = useState(globalFilter);
+
+  const onFilterChange = useAsyncDebounce(
+    (value) => setGlobalFilter(value || undefined),
+    200
+  );
+
+  const handleInputChange = (e) => {
+    setValue(e.target.value);
+    onFilterChange(e.target.value);
+  };
+
+  return (
+    <div className="flex justify-between">
+      <h2 className="text-xl tracking-widest">Buscar:</h2>
+      <input
+        size={25}
+        value={value || ""}
+        onChange={handleInputChange}
+        placeholder={`${totalDigimonsDisponibles} Digimons disponibles...`}
+        className="text-right pl-2 font-normal ml-1 border rounded-lg"
+      />
+    </div>
+  );
+}
