@@ -70,7 +70,7 @@ function App() {
                 {errors.digimon?.message}
               </p>
             </form>
-            <div className="border my-2 rounded-lg min-h-[27rem] max-w-[24rem]">
+            <div className="border my-2 rounded-lg min-h-[27rem] max-w-[21rem]">
               <h2 className="text-center font-bold pt-2 text-xl">{digimon}</h2>
               <ImgCargada />
               <div className="border-t pt-6">

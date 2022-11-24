@@ -192,7 +192,13 @@ function DigimonFilter({
 
   return (
     <div className="flex justify-between">
-      <h2 className="text-xl tracking-widest">Buscar:</h2>
+      <h2
+        className="text-xl tracking-widest 
+      text-transparent bg-clip-text
+      bg-gradient-to-r from-[#2e86c1] to-[#48c9b0]"
+      >
+        Buscar:
+      </h2>
       <input
         size={25}
         value={value || ""}
