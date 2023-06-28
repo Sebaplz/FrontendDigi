@@ -6,6 +6,7 @@ const URL_DEFAULT = "https://www.digi-api.com/api/v1/digimon?page=0";
 function useDigimones() {
   const [digimones, setDigimones] = useState([]);
   const [pagina, setPagina] = useState("");
+  const [verMas, setVerMas] = useState(true);
 
   const getDigimones = async (url = URL_DEFAULT) => {
     //Recuperar listado de Digimones
@@ -24,6 +25,7 @@ function useDigimones() {
   const masDigimones = async () => {
     const { content, pageable } = await getDigimones(pagina);
     setDigimones((prev) => [...prev, ...content]);
+    pageable.nextPage === "" && setVerMas(false);
     setPagina(pageable.nextPage);
   };
 
@@ -31,7 +33,7 @@ function useDigimones() {
     obtenerDigimones();
   }, []);
 
-  return { digimones, masDigimones };
+  return { digimones, masDigimones, verMas };
 }
 
 export default useDigimones;

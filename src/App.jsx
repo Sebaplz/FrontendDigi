@@ -1,8 +1,7 @@
 import "./App.css";
-import Digimon from "./components/Digimon";
+import Digimones from "./components/Digimones";
 import Nav from "./components/Nav";
 import Search from "./components/Search";
-import { AiOutlineArrowUp } from "react-icons/ai";
 
 function App() {
   return (
@@ -10,7 +9,7 @@ function App() {
       <Nav />
       <Search />
       <main className="mx-auto">
-        <Digimon />
+        <Digimones />
       </main>
     </>
   );
