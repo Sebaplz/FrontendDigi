@@ -2,51 +2,66 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Register() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
+  const password = React.useRef({});
+  password.current = watch("password", "");
+
+  const registerUser = async (data) => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/register", {
+        userName: data.nombre,
+        email: data.email,
+        password: data.password,
+      });
+      // Procesar la respuesta exitosa
+      console.log(response.data);
+      // Crear un objeto con email y userName
+      return navigate("/");
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data);
+      } else {
+        console.log(error);
+        setError("Ocurrió un error");
+      }
+    }
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#2e86c1] to-[#48c9b0]">
-      <div className="flex flex-col-reverse lg:flex-row lg:p-5">
-        <div className="bg-gradient-to-r from-[#2e86c1] to-[#48c9b0] lg:rounded-l-lg lg:w-1/2 w-0">
-          <div className="flex items-end lg:h-[40rem]">
-            <img
-              src="bg-register.png"
-              alt=""
-              aria-hidden="true"
-              className="lg:h-full"
-            />
-          </div>
-        </div>
-        <div className="bg-white rounded-lg lg:rounded-none lg:rounded-r-lg lg:w-1/2">
-          <div className="flex justify-end p-5">
-            <img src="logo-digimon.png" alt="Logo" className="w-20" />
-          </div>
-          <h1 className="text-4xl font-bold text-center pb-20">Registrarse</h1>
-          <div className="px-5">
-            <form
-              onSubmit={handleSubmit((data) => {
-                axios
-                  .post("http://localhost:9000/register", {
-                    nombre: data.nombre,
-                    email: data.email,
-                    password: data.password,
-                  })
-                  .then(function (response) {
-                    return navigate("/");
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  });
-              })}
-            >
+    <>
+      <main className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#2e86c1] to-[#48c9b0]">
+        <div className="flex h-[750px] mx-5">
+          <section className="hidden lg:block">
+            <div className="bg-gradient-to-r from-[#2e86c1] to-[#48c9b0] h-full rounded-l-lg">
+              <img
+                src="bg-register.png"
+                alt=""
+                aria-hidden="true"
+                className="h-full"
+              />
+            </div>
+          </section>
+          <section className="relative p-5 bg-white lg:rounded-r-lg lg:rounded-l-none rounded-lg">
+            <div className="flex justify-end p-5">
+              <img src="logo-digimon.png" alt="Logo" className="w-20" />
+            </div>
+            <h1 className="text-4xl font-bold text-center mb-5">
+              Crear Cuenta
+            </h1>
+            <form onSubmit={handleSubmit(registerUser)}>
               <label htmlFor="nombre">Nombre</label>
               <input
                 {...register("nombre", {
@@ -71,49 +86,54 @@ function Register() {
               <label htmlFor="password">Contraseña</label>
               <input
                 {...register("password", {
-                  required: "Password no puede estar vacio!",
+                  required: "Contraseña no puede estar vacio!",
                 })}
                 type="Password"
                 className="w-full border rounded-lg p-2"
               />
               <p className="text-red-500 mb-5">{errors.password?.message}</p>
+              <label htmlFor="passwordConfirmation">Confirmar Contraseña</label>
+              <input
+                {...register("passwordConfirmation", {
+                  required: "Confirmar Contraseña no puede estar vacio!",
+                  validate: (value) =>
+                    value === password.current ||
+                    "Las contraseñas no coinciden!",
+                })}
+                type="Password"
+                className="w-full border rounded-lg p-2"
+              />
+              <p className="text-red-500 mb-5">
+                {errors.passwordConfirmation?.message}
+              </p>
               <button
                 className="w-full bg-[#2e86c1] text-white h-12 mb-4 rounded-lg"
                 type="submit"
               >
-                Register
+                Registrarse
               </button>
+              <p className="text-red-500 mb-5">
+                {error && <span>{error}</span>}
+              </p>
             </form>
-          </div>
-          <div className="flex justify-between p-5">
-            <p>
-              Ya tienes cuenta?{" "}
-              <span>
-                <a href="/login" className="text-[#2e86c1] underline">
-                  Inicia Sesión Aquí!
-                </a>
-              </span>
-            </p>
-            <a href="/" className="text-[#2e86c1] underline">
-              Volver al inicio
-            </a>
-          </div>
+            <div className="absolute bottom-5 flex justify-between w-[90%]">
+              <p>
+                Ya tienes cuenta? <br />
+                <span>
+                  <a href="/login" className="text-[#2e86c1] underline">
+                    Inicia Sesión Aquí!
+                  </a>
+                </span>
+              </p>
+              <a href="/" className="text-[#2e86c1] underline">
+                Volver al inicio
+              </a>
+            </div>
+          </section>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
 
 export default Register;
-/* fetch("http://localhost:9000/api/users", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                  },
-                  
-                  mode: "no-cors",
-                  body: JSON.stringify({
-                    email: data.email,
-                    password: data.password,
-                  }),
-                }); */
