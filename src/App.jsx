@@ -11,7 +11,6 @@ function App() {
       <Search />
       <main className="mx-auto">
         <Digimon />
-        {/* <AiOutlineArrowUp className="absolute bottom-0 right-0 rounded-full bg-slate-500 text-5xl" /> */}
       </main>
     </>
   );

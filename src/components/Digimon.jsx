@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
-
-const baseUrl = "https://www.digi-api.com/api/v1/digimon?page=221";
+import useDigimones from "./hooks/useDigimones";
 
 function Digimon({ id, name, image }) {
   return (
@@ -22,32 +20,16 @@ function Digimon({ id, name, image }) {
 }
 
 function Digimones() {
-  const [digimones, setDigimones] = useState([]);
-  const [pagina, setPagina] = useState([]);
-
-  useEffect(() => {
-    const getDigimones = async () => {
-      //Recuperar listado de Digimones
-      const response = await fetch(baseUrl);
-      const listaDigimons = await response.json();
-      const { content, pageable } = listaDigimons;
-      setDigimones(content);
-      console.log(pageable);
-      //Ver detalles del digimon
-      /* const newDigimon = content.map(async (digimon) => {
-        const response = await fetch(digimon.href);
-        const digi = await response.json();
-        console.log(digi);
-      }); */
-    };
-    getDigimones();
-  }, []);
+  const { digimones, masDigimones } = useDigimones();
 
   return (
     <section className="flex min-h-screen flex-col items-center justify-center gap-4 md:mx-0 md:flex-row md:flex-wrap">
-      {digimones.map((digimon) => {
-        return Digimon(digimon);
-      })}
+      {digimones.map((digimon) => (
+        <Digimon {...digimon} key={digimon.id} />
+      ))}
+      <button className="bg-green-700 p-2 text-white" onClick={masDigimones}>
+        Mostar más digimones
+      </button>
     </section>
   );
 }
